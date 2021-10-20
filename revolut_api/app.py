@@ -108,3 +108,12 @@ def put_hello(username):
     #if username contains something except letters and return error with http code = 400 Bad request
     else:
         return ({"error": "username must contain only letters"}, 400)
+
+# Run server
+
+if __name__ == '__main__':
+        try:
+                if  os.environ['SERVE_PORT']:
+                        app.run(debug=True, host='0.0.0.0', port=int(os.environ['SERVE_PORT']))
+        except Exception as e:
+                print ("ERROR: SERVE_PORT not defined as env variable")
