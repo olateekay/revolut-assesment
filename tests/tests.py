@@ -1,15 +1,19 @@
 import unittest
-import os,sys,inspect
+from revolut_api import app
+import os
 import json
 from datetime import datetime
+import sys
 import xmlrunner
-from revolut_api import app
-
 
 class MyTestCase(unittest.TestCase):
 
     def setUp(self):
         app.app.testing = True
+        DB_PORT=5432
+        if os.environ.get('DB_PORT'):
+            DB_PORT=os.environ.get('DB_PORT')
+        app.app.config["CONNECTION_STRING"]="dbname='{}' user='{}' host='{}' password='{}' port='{}'".format(os.environ.get('DB_NAME'),os.environ.get('DB_USER'), os.environ.get('DB_HOST'),os.environ.get('DB_PASSWORD'), DB_PORT)  
         self.app = app.app.test_client()
         app.app.config["USER"]="unittest"
         self.api = "/hello/"
@@ -58,5 +62,5 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(response_message,json.loads(response.get_data()))
 
 if __name__ == '__main__':
-    app.db.create_all()
+    # unittest.main()
     unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))

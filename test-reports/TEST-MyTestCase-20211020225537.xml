@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<testsuite name="MyTestCase-20211020225537" tests="4" time="0.049" failures="0" errors="2">
+	<testcase classname="MyTestCase" name="test_1_put" time="0.032"/>
+	<testcase classname="MyTestCase" name="test_3_put" time="0.007"/>
+	<testcase classname="MyTestCase" name="test_2_get" time="0.006">
+		<error type="AssertionError" message="200 != 400"><![CDATA[Traceback (most recent call last):
+  File "/Users/olatokunboogunlade/PROJECTS2/revolut-assesment/tests/tests.py", line 43, in test_2_get
+    self.assertEqual(200,response.status_code)
+AssertionError: 200 != 400
+]]></error>
+	</testcase>
+	<testcase classname="MyTestCase" name="test_4_get" time="0.005">
+		<error type="AssertionError" message="200 != 400"><![CDATA[Traceback (most recent call last):
+  File "/Users/olatokunboogunlade/PROJECTS2/revolut-assesment/tests/tests.py", line 61, in test_4_get
+    self.assertEqual(200,response.status_code)
+AssertionError: 200 != 400
+]]></error>
+	</testcase>
+	<system-out><![CDATA[Error while connecting to PostgreSQL could not translate host name "None" to address: nodename nor servname provided, or not known
+
+Error while connecting to PostgreSQL could not translate host name "None" to address: nodename nor servname provided, or not known
+
+Check adding entry - status code is equal 204
+Error while connecting to PostgreSQL could not translate host name "None" to address: nodename nor servname provided, or not known
+
+Check get entry - status code is equal 200 and check response message
+Error while connecting to PostgreSQL could not translate host name "None" to address: nodename nor servname provided, or not known
+
+Error while connecting to PostgreSQL could not translate host name "None" to address: nodename nor servname provided, or not known
+
+Check updating entry with birthdate today- status code is equal 204
+Error while connecting to PostgreSQL could not translate host name "None" to address: nodename nor servname provided, or not known
+
+Check get entry - status code is equal 200 and check response message
+]]></system-out>
+	<system-err><![CDATA[]]></system-err>
+</testsuite>
