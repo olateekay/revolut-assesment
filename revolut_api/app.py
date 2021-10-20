@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 #create flask object and set configuration
 app = flask.Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["DEBUG"] = True
 app.config["DATE_FORMAT"] = "%Y-%m-%d"
 if os.environ.get('SQLALCHEMY_DATABASE_URI'):
