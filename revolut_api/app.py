@@ -1,119 +1,147 @@
 import flask
-from flask import Flask,request, jsonify, make_response
+from flask import request, jsonify, make_response
 from datetime import datetime
 import re
 import json
 import os
 import psycopg2
-from flask_sqlalchemy import SQLAlchemy
 
-#create flask object and set configuration
+
 app = flask.Flask(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["DEBUG"] = True
 app.config["DATE_FORMAT"] = "%Y-%m-%d"
-if os.environ.get('SQLALCHEMY_DATABASE_URI'):
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
-    #create SQLAlchemy object
-    db = SQLAlchemy(app)
-else:
-    raise Exception('Please provide SQLALCHEMY_DATABASE_URI environment value')
+DB_PORT=5432
+if os.environ.get('DB_PORT'):
+    DB_PORT=os.environ.get('DB_PORT')
+app.config["CONNECTION_STRING"]="dbname='{}' user='{}' host='{}' password='{}' port='{}'".format(os.environ.get('DB_NAME'),os.environ.get('DB_USER'), os.environ.get('DB_HOST'),os.environ.get('DB_PASSWORD'), DB_PORT)  
+def get_birthdate(username):
+        try:
+            connectionString=app.config["CONNECTION_STRING"]
+            
+            #Check if user is presented in DB
+            connection = psycopg2.connect(connectionString)
 
-#db.model class definition for SQLAlchemy - it will create table when called
-class Users(db.Model):
-   id = db.Column(db.Integer, primary_key=True)
-   username = db.Column(db.String(80), unique=True, nullable=False)
-   birthdate = db.Column(db.Date, nullable=False)
+            # Create a cursor to perform database operations
+            cursor = connection.cursor()
+            # Executing a SQL query
+            cursor.execute("SELECT id,username,birthdate FROM users WHERE username='{}';".format(username))
+            # Fetch result
+            if cursor.rowcount>0:
+                record = cursor.fetchone()
+                return record[2]
+            else:
+                return None
+        except (Exception, psycopg2.Error) as error:
+            print("Error while connecting to PostgreSQL", error)
+        finally:
+            if 'connectnio' in locals():
+                if (connection):
+                    cursor.close()
+                    connection.close()
+                    print("PostgreSQL connection is closed")
+def update_birthdate(username, birthdate):
+    try:
+        connectionString=app.config["CONNECTION_STRING"]
+            
+        #Check if user is presented in DB
+        connection = psycopg2.connect(connectionString)
 
-#route for flask method GET path /hello/<username>
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Executing a SQL query
+        cursor.execute("UPDATE users SET birthdate = '{}' WHERE username  = '{}';".format(birthdate, username))
+        # Fetch result
+        connection.commit()
+    except (Exception, psycopg2.Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if 'connectnio' in locals():
+            if (connection):
+                cursor.close()
+                connection.close()
+                print("PostgreSQL connection is closed")
+def add_birthdate(username, birthdate):
+        try:
+            connectionString=app.config["CONNECTION_STRING"]
+            
+            #Check if user is presented in DB
+            connection = psycopg2.connect(connectionString)
+
+            # Create a cursor to perform database operations
+            cursor = connection.cursor()
+            # Executing a SQL query
+            cursor.execute("INSERT into users (username, birthdate) VALUES ('{}', '{}');".format(username,birthdate))
+            # Fetch result
+            connection.commit()
+        except (Exception, psycopg2.Error) as error:
+            print("Error while connecting to PostgreSQL", error)
+        finally:
+            if 'connectnio' in locals():
+                if (connection):
+                    cursor.close()
+                    connection.close()
+                    print("PostgreSQL connection is closed")
+
 @app.route('/hello/<username>', methods=['GET'])
 def get_hello(username):
-    #check if all symbols are letters, else return error
     if username.isalpha():
         try:
-            #query for user by username, if not present user = None
-            user = Users.query.filter_by(username=username).first()
-            if(user):
-                    # get today's date
+            birthdate = get_birthdate(username)
+            if(birthdate):
                     now = datetime.now()
-                    # changing user's birtdate year to this year, in order to compare days
-                    formatted_birthday = datetime(now.year, user.birthdate.month, user.birthdate.day)
-                    # calculating days between user's birtdate and today
+                    formatted_birthday = datetime(now.year, birthdate.month, birthdate.day)
                     days_to_birthday=(formatted_birthday - now.today()).days+1
-                    # if days more than 0 return message with days ti birtdate
                     if(days_to_birthday>0):
                         return jsonify(
                             message="Hello, {}! Your birthday is in {} day(s)".format(username, days_to_birthday)
                         )
-                    # if days is equal to 0 greet user
                     elif days_to_birthday == 0:
                         return jsonify(
                             message="Hello, {}! Happy birthday!".format(username)
                         )
-                    # else return message that user's birtdate already passed
                     else:
                         return jsonify(
                             message="Hello, {}! Your birthday has already passed".format(username)
                         )
-            # if user = None return error that user doesn't exist with http code = 400 Bad request
             else:
                 return ({"error": "username {} is not presented".format(username)}, 400)
-        # if code throws an exception return error with http code = 400 Bad request
         except (Exception) as error:
             print(error)
             return ({"error": "something went wrong"}, 400)
-    # if username contains something except letters return error with http code = 400 Bad request
     else:
         return ({"error": "username must contain only letters"}, 400)
 
 @app.route('/hello/<username>', methods=['PUT'])
 def put_hello(username):
-    #check if all symbols are letters, else return error
     if username.isalpha():
-        #check if Content-type is application/json
         if request.headers.get('Content-Type') == 'application/json':
-            #check if request body is json
             if request.is_json:
                 try:
-                    # get dateOfBirth from request body
                     dateOfBirth=datetime.strptime(request.get_json()['dateOfBirth'], app.config["DATE_FORMAT"])
-                    # check if dateOfBirth doesn't exceed today
                     if dateOfBirth < datetime.now():
-                        # query table by username
-                        user = Users.query.filter_by(username=username).first()
-                        # if user is not None, update birthdate and commit
-                        if user:
-                            user.birthdate = dateOfBirth
-                            db.session.commit()
+                        if get_birthdate(username):
+                            update_birthdate(username, dateOfBirth)
                             return ('', 204)
-                        # if user is None, it means that we need to create user
                         else:
-                            user = Users(username=username, birthdate=dateOfBirth)
-                            db.session.add(user)
-                            db.session.commit()
+                            add_birthdate(username, dateOfBirth)
                             return ('', 204)
-                    # return that date must not exceed today with http code 400
                     else:
                         return ({"error": "date must not exceed today"}, 400)
-                # if there is an exception return error with http code 400
                 except (Exception) as parseError:
                     print(parseError)
                     return ({"error": "parsing error: {}".format(parseError)}, 400)
-            # if request body is not json formatted return error with http code 400
             else:
                 return ({"error": "body of PUT request should be json-formatted"}, 400)             
-        # if Content-type header is not application/json return error with http code 400
         else:
             return ({"error": "header 'Content-Type' should be application/json"}, 400)
-    #if username contains something except letters and return error with http code = 400 Bad request
     else:
         return ({"error": "username must contain only letters"}, 400)
 
-# Run server
-
 if __name__ == '__main__':
-        try:
-                if  os.environ['SERVE_PORT']:
-                        app.run(debug=True, host='0.0.0.0', port=int(os.environ['SERVE_PORT']))
-        except Exception as e:
-                print ("ERROR: SERVE_PORT not defined as env variable")
+    HOST="localhost"
+    if os.environ.get('APP_HOST'):
+            HOST=os.environ.get('APP_HOST')
+    PORT=5000
+    if os.environ.get('APP_PORT'):
+            PORT=os.environ.get('APP_PORT')
+    app.run(host=HOST, port=PORT, debug=True)
