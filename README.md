@@ -40,24 +40,12 @@ Please put your work on github or bitbucket.
 
  - To dockerise the app, change directory to `revolut_api` and run the below command , we are using the first command so that our image can be accesible locally by minikube
 
-docker build -t pythonapi:v1 
+`docker build -t revolutapi:latest`
+
+ 
 
 
 
 
 
 
-
-CREATE TABLE users (id int, users text);
-CREATE TABLE birthdate (id int, birthdate int);
-
-export DB_PORT=8080
-export DB_USER=olatokunboogunlade
-export DB_PASSWORD=1234
-export DB_HOST=localhost
-export DB_NAME=users
-
-
-DROP DATABASE users;
-
-SQLALCHEMY_DATABASE_URI: "postgresql://user:somestrongpassword@localhost:5432/users"
