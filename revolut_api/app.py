@@ -25,7 +25,7 @@ def get_birthdate(username):
             # Create a cursor to perform database operations
             cursor = connection.cursor()
             # Executing a SQL query
-            cursor.execute("SELECT id,username,birthdate FROM users WHERE username='{}';".format(username))
+            cursor.execute("SELECT id, username,birthdate FROM users WHERE username='{}';".format(username))
             # Fetch result
             if cursor.rowcount>0:
                 record = cursor.fetchone()

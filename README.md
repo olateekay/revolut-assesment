@@ -24,3 +24,26 @@ required to support both cloud platforms).
 2. The solution must have tests, runnable locally, and deployable to the cloud.
 3. Use common sense.
 Please put your work on github or bitbucket.
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE users (id int, users text);
+CREATE TABLE birthdate (id int, birthdate int);
+
+export DB_PORT=8080
+export DB_USER=olatokunboogunlade
+export DB_PASSWORD=1234
+export DB_HOST=localhost
+export DB_NAME=users
+
+
+DROP DATABASE users;
+
+SQLALCHEMY_DATABASE_URI: "postgresql://user:somestrongpassword@localhost:5432/users"
