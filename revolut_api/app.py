@@ -13,6 +13,7 @@ app.config["DATE_FORMAT"] = "%Y-%m-%d"
 DB_PORT=5432
 if os.environ.get('DB_PORT'):
     DB_PORT=os.environ.get('DB_PORT')
+     
 app.config["CONNECTION_STRING"]="dbname='{}' user='{}' host='{}' password='{}' port='{}'".format(os.environ.get('DB_NAME'),os.environ.get('DB_USER'), os.environ.get('DB_HOST'),os.environ.get('DB_PASSWORD'), DB_PORT)  
 def get_birthdate(username):
         try:
