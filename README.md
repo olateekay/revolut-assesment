@@ -26,7 +26,21 @@ required to support both cloud platforms).
 Please put your work on github or bitbucket.
 
 
+### Task Resolution
 
+- Set up your python virtualenv
+
+- Install the following python modules
+
+  `pip install -r requirements.txt`
+
+ - Run the app by executing
+
+  `python3 revolut_api/app.py`
+
+ - To dockerise the app, change directory to `revolut_api` and run the below command , we are using the first command so that our image can be accesible locally by minikube
+
+docker build -t pythonapi:v1 
 
 
 
