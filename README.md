@@ -27,7 +27,45 @@ required to support both cloud platforms).
 Please put your work on github or bitbucket.
 
 
-### Task Resolution
+
+# Task Resolution
+
+
+## Prerequisites
+This guide assumes you already have the following installed locally
+
+Postgres https://www.2ndquadrant.com/en/blog/pginstaller-install-postgresql/
+
+Minikube cluster  https://minikube.sigs.k8s.io/docs/start/
+
+Helm https://helm.sh/docs/helm/helm_install/
+
+Make https://www.gnu.org/software/make/
+
+
+
+## Version Used
+
+Python 3.9.5
+
+Helm 3.5.0
+
+GNU Make 3.81
+
+After installing postgres, create the database `users` , then create the columns, `id`, `username`, and `birthdate`. If not you will get this error ;
+
+`Error while connecting to PostgreSQL relation "users" does not exist`
+
+**Application uses postgresql and need following environment values:**
+
+export DB_USER=supply your postgresdb user
+
+export DB_PASSWORD=supply your postgresdb password
+
+export DB_HOST=localhost
+
+export DB_NAME=users
+## Python Setup
 
 - Set up your python virtualenv
 
@@ -37,13 +75,32 @@ Please put your work on github or bitbucket.
 
  - Run the app by executing
 
-  `python3 revolut_api/app.py`
+   `python3 revolut_api/app.py`
+
+   Test the GET and PUT methods on postman
+
+   ![alt text](put.png)
+
+   ![alt text](get.png)
   
 - Run the tests by executing
   
   *NB*  you might need to run this 
- `export PYTHONPATH=$(pwd) for running tests`
- Then this, `python tests/tests.py`
+
+  `export PYTHONPATH=$(pwd) for running tests`
+
+   Then this, 
+
+   `python tests/tests.py`
+
+
+   ![pytests](pytests.png)
+
+   **Tests includes for steps**
+ - put unittest user with birtdate on 31-12-{now.year-1}
+ - gets unittest user and checks response message
+ - updates unittest user's birtdate to today
+ - gets unittest user and checks response message
 
 
  - To dockerise the app, change directory to `revolut_api` and run the below command , we are using the first command so that our image can be accesible locally by minikube
