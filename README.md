@@ -115,8 +115,7 @@ Then push to docker hub so that our image can be assecible by minikube
 
 
 ## Helm
-
-Deploying the dockerised application with Helm
+To cater for building a  no-downtime production deployment of this application, keeping in mind aspects that an SRE would have to consider, we would deploy the dockerised application with Helm.
 Helm is the Kubernetes Package Manager, Helm manages the lifecycle of an application in Kubernetes.
 In this deployment to minikube , we will be using Helm charts . Helm chats is one of the best practises for building efficient clusters in kubernetes
 
@@ -187,7 +186,44 @@ envFrom:
 ```
 
 
+## Installing the Helm Chart so as to deploy our dockerised application into the cluster
 
+- Check if minikube is running
 
+`minikube status`
+
+- The status should be running before you proceed , if not running , please start it with minikube start
+
+- install the chart - (helm install command deploys the app)
+
+```
+helm install revolutchart revolutchart/ --values revolutchart/values.yaml
+```
+
+- View the deployed application
+
+`minikube service --url revolutchart`
+
+Output URL will be something like http://127.0.0.1:64047
+
+## Makefile
+
+In order to deploy the application in an automated way that can be easily replicated,we will use a `Makefile`. This `Makefile` contains configuration scripts to deploy the application
+
+- To dockerize the app If you are working on minikube , run 
+
+`eval $(minikube docker-env)`
+
+ before the Make build command in order for your local cluster to have access to the image
+
+`make build`
+
+- To deploy to a kubernetes cluster
+
+`make install`
+
+- To run Unittests
+
+`make test`
 
 
