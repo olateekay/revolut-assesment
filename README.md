@@ -227,3 +227,8 @@ In order to deploy the application in an automated way that can be easily replic
 `make test`
 
 ![alt text](https://github.com/olateekay/revolut-assesment/blob/ola-develop/images/make.png)
+
+
+## System Diagram
+This is the system diagram of the application deployed to EKS environment on AWS cloud
+![alt text](https://github.com/olateekay/revolut-assesment/blob/ola-develop/images/amaz.png)
