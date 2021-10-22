@@ -81,9 +81,9 @@ export DB_NAME=users
 
    Test the GET and PUT methods on postman
 
-   ![alt text](put.png)
+   ![alt text](https://github.com/olateekay/revolut-assesment/blob/ola-develop/images/put.png)
 
-   ![alt text](get.png)
+   ![alt text](https://github.com/olateekay/revolut-assesment/blob/ola-develop/images/get.png)
   
 - Run the tests by executing
   
@@ -96,7 +96,7 @@ export DB_NAME=users
    `python tests/tests.py`
 
 
-   ![pytests](pytests.png)
+   ![pytests](https://github.com/olateekay/revolut-assesment/blob/ola-develop/images/pytests.png)
 
    **Tests includes for steps**
  - put unittest user with birtdate on 31-12-{now.year-1}
@@ -226,4 +226,4 @@ In order to deploy the application in an automated way that can be easily replic
 
 `make test`
 
-![alt text](make.png)
+![alt text](https://github.com/olateekay/revolut-assesment/blob/ola-develop/images/make.png)
