@@ -1,5 +1,6 @@
 # revolut-assesment
-  DevOps Engineer Test
+The scope of this project is to create the following:
+
 1. Design and code a simple "Hello World" application that exposes the following HTTP-based APIs:
  Description: Request: Response:
 Saves/updates the given user’s name and date of birth in the database.
@@ -37,10 +38,17 @@ Please put your work on github or bitbucket.
  - Run the app by executing
 
   `python3 revolut_api/app.py`
+  
+- Run the tests by executing
+  
+  *NB*  you might need to run this 
+ `export PYTHONPATH=$(pwd) for running tests`
+ Then this, `python tests/tests.py`
+
 
  - To dockerise the app, change directory to `revolut_api` and run the below command , we are using the first command so that our image can be accesible locally by minikube
 
-`docker build -t revolutapi:latest`
+`docker build -t revolutapi:v1`
 
  
 
