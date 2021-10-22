@@ -11,10 +11,8 @@ build: build  ## dockerise the simple http api python app
 # Deploy the dockerised app into minikube using helm chart 
 .PHONY: install
 install: install
-	cd revolutchart && \
-	helm upgrade --install revolutchart revolutapi/ -f revolutapi/values.yaml --set image.tag=${VERSION}
+	helm upgrade --install revolutchart revolutchart/ -f revolutchart/values.yaml --set image.tag=${VERSION}
 
-	
 
 # Run the test 
 .PHONY: test

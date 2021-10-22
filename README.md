@@ -226,4 +226,4 @@ In order to deploy the application in an automated way that can be easily replic
 
 `make test`
 
-
+![alt text](make.png)
