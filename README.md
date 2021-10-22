@@ -56,7 +56,7 @@ After installing postgres, create the database `users` , then create the columns
 
 `Error while connecting to PostgreSQL relation "users" does not exist`
 
-**Application uses postgresql and need following environment values:**
+**Application uses postgresql in a local envirinment and needs the environment values below, however, It is not okay to use this technique on a production web server, for that a proper database setup must be used.**
 
 export DB_USER=supply your postgresdb user
 
@@ -65,6 +65,8 @@ export DB_PASSWORD=supply your postgresdb password
 export DB_HOST=localhost
 
 export DB_NAME=users
+
+
 ## Python Setup
 
 - Set up your python virtualenv
@@ -103,11 +105,86 @@ export DB_NAME=users
  - gets unittest user and checks response message
 
 
- - To dockerise the app, change directory to `revolut_api` and run the below command , we are using the first command so that our image can be accesible locally by minikube
+## Docker
+
+ - To dockerise the app, change directory to `revolut_api` and run the below command 
 
 `docker build -t revolutapi:v1`
 
+Then push to docker hub so that our image can be assecible by minikube
+
+
+## Helm
+
+Deploying the dockerised application with Helm
+Helm is the Kubernetes Package Manager, Helm manages the lifecycle of an application in Kubernetes.
+In this deployment to minikube , we will be using Helm charts . Helm chats is one of the best practises for building efficient clusters in kubernetes
+
+### Create Helm
+
+`helm create revolutchart`
+
+After creating the chart, the required folders and files will be created automatically
+
+Adjust the values to suit your deployment. 
+The following were asjusted for this deployment
+
+in the values.yml file,
+
+- Change the image name to the name of the image built in the docker step
+
+`repository: devytk/revolut`
+
+- Change the nameOverride and fullnameOverride reflect the name of our deployment
+
+`nameOverride: "revolutchart"
+fullnameOverride: "revolutchart"
+`
+
+- Define the port that the app should listen on
+
+```
+port:
+  name: APP_PORT  
+  value: 5000
+```
+
+- Update the networking service type to NodePort since we are deploying this into a minikube and that is the recommended networking service type
+
+```
+service:
+  type: NodePort
+  port: 5000
+```
+
+- Update the ingress host to the domain to be used for the app
+
+```
+hosts:
+    - host: revolutapi.local
+      paths: 
+      - path: /hello
+```
  
+
+ - Any other configuration can be added as needed per environment and per deployment
+
+
+We will need to distribute the environmental variables and credentials securely using secrets. we can create the secret directly with `kubectl` 
+
+```
+kubectl create secret generic app-secret --from-literal='DB_PORT=8080' 
+--from-literal='DB_USER=supply your db username' --from-literal='DB_PASSWORD=supply db password' --from-literal='DB_HOST=localhost' --from-literal='DB_NAME=users'
+
+```
+- Then Update Deployment.yaml file,to include the environment variable.
+Use envFrom to define all of the Secret's data as container environment variables
+
+```
+envFrom:
+- secretRef:
+     name: app-secret
+```
 
 
 
